@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { extract } from 'letterparser';
+import { extract, LetterparserNode } from 'letterparser';
 import sanitizeHtml from 'sanitize-html';
 
-interface LetterProps {
-  message: string;
+export interface LetterProps {
+  message: string | LetterparserNode;
 }
 
 export const Letter: React.FC<LetterProps> = ({ message }) => {

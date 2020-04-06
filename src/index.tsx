@@ -1,3 +1,3 @@
-import { Letter } from './Letter';
+import { Letter, LetterProps } from './Letter';
 
-export { Letter };
+export { Letter, LetterProps };
