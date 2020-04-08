@@ -1,5 +1,5 @@
 const allowedTags = {
-  a: ['class', 'href', 'id', 'style', 'target', 'name'],
+  a: ['class', 'href', 'id', 'style', 'target'],
   b: ['class', 'id', 'style'],
   br: ['class', 'id', 'style'],
   center: ['class', 'id', 'style'],
@@ -85,7 +85,14 @@ const allowedTags = {
   ul: ['class', 'dir', 'id', 'style']
 } as { [k: string]: string[] };
 
-const removeWithContents = ['script', 'iframe', 'textarea', 'title'];
+const removeWithContents = [
+  'script',
+  'iframe',
+  'textarea',
+  'title',
+  'noscript',
+  'noembed'
+];
 
 function prependIdToSelectorText(selectorText: string, id: string) {
   return selectorText
