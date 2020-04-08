@@ -87,7 +87,7 @@ const allowedTags = {
 
 const removeWithContents = ['script', 'iframe', 'textarea', 'title'];
 
-function sanitizeHtml(input: string) {
+function sanitizeHtml(input: string, dropAllTags?: boolean) {
   const doc = new DOMParser().parseFromString(input, 'text/html');
 
   // Remove comments.
@@ -101,13 +101,32 @@ function sanitizeHtml(input: string) {
     node.parentNode?.removeChild(node);
   }
 
+  const removeTags = [...removeWithContents];
+  if (dropAllTags) {
+    removeTags.push('style');
+  }
+
   // Remove disallowed tags.
-  const disallowedList = doc.querySelectorAll(removeWithContents.join(', '));
+  const disallowedList = doc.querySelectorAll(removeTags.join(', '));
   disallowedList.forEach(element => element.remove());
+
+  // Move styles from head to body.
+  const styleList = doc.querySelectorAll('head > style');
+  styleList.forEach(element => {
+    doc.body.appendChild(element);
+  });
 
   // Filter other tags.
   const allList = doc.querySelectorAll('body *');
   allList.forEach(element => {
+    if (dropAllTags) {
+      if (element.textContent) {
+        const textNode = doc.createTextNode(element.textContent);
+        element.parentNode?.replaceChild(textNode, element);
+      }
+      return;
+    }
+
     const tagName = element.tagName.toLowerCase();
     if (tagName in allowedTags) {
       const allowedAttributes = allowedTags[tagName];
@@ -117,15 +136,8 @@ function sanitizeHtml(input: string) {
         }
       }
     } else {
-      console.log(tagName);
       element.outerHTML = element.innerHTML;
     }
-  });
-
-  // Move styles from head to body.
-  const styleList = doc.querySelectorAll('head > style');
-  styleList.forEach(element => {
-    doc.body.appendChild(element);
   });
 
   return doc.body.innerHTML;
@@ -134,7 +146,7 @@ function sanitizeHtml(input: string) {
 export function sanitize(html: string, text?: string) {
   let contents = html ?? '';
   if (contents?.length === 0 && text) {
-    contents = sanitizeHtml(text)
+    contents = sanitizeHtml(text, true)
       .split('\n')
       .map(line => '<p>' + line + '</p>')
       .join('\n');
