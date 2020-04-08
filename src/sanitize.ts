@@ -87,8 +87,29 @@ const allowedTags = {
 
 const removeWithContents = ['script', 'iframe', 'textarea', 'title'];
 
+function prependIdToSelectorText(selectorText: string, id: string) {
+  return selectorText
+    .split(',')
+    .map(selector => selector.trim())
+    .map(selector => {
+      if (selector.toLowerCase().startsWith('body')) {
+        return '#' + id + ' ' + selector.substring(4);
+      } else {
+        return '#' + id + ' ' + selector;
+      }
+    })
+    .join(',');
+}
+
 function sanitizeHtml(input: string, dropAllTags?: boolean) {
   const doc = new DOMParser().parseFromString(input, 'text/html');
+  const id =
+    'msg_' +
+    String.fromCharCode(
+      ...new Array(24)
+        .fill(undefined)
+        .map(_ => ((Math.random() * 25) % 25) + 65)
+    );
 
   // Remove comments.
   const commentIter = doc.createNodeIterator(
@@ -140,7 +161,42 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
     }
   });
 
-  return doc.body.innerHTML;
+  // Prepend wrapper ID.
+  const bodyStyleList = doc.querySelectorAll('body style');
+  bodyStyleList.forEach(element => {
+    const styleElement = element as HTMLStyleElement;
+    const stylesheet = styleElement.sheet as CSSStyleSheet;
+    const newRules: CSSStyleRule[] = [];
+
+    for (let i = 0; i < stylesheet.cssRules.length; i++) {
+      const rule = stylesheet.cssRules.item(i) as CSSStyleRule;
+
+      if (rule.type === rule.STYLE_RULE) {
+        rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
+        newRules.push(rule);
+      } else if (rule.type === rule.MEDIA_RULE && 'cssRules' in rule) {
+        const mediaRule = rule as CSSMediaRule;
+
+        for (let i = 0; i < mediaRule.cssRules.length; i++) {
+          const rule = mediaRule.cssRules.item(i) as CSSStyleRule;
+
+          if (rule.selectorText) {
+            rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
+          }
+        }
+
+        newRules.push(rule);
+      }
+    }
+
+    styleElement.textContent = newRules.map(rule => rule.cssText).join('\n');
+  });
+
+  const div = doc.createElement('div');
+  div.id = id;
+  div.innerHTML = doc.body.innerHTML;
+
+  return div.outerHTML;
 }
 
 export function sanitize(html: string, text?: string) {
