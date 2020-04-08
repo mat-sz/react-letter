@@ -1,134 +1,144 @@
-import sanitizeHtml from 'sanitize-html';
+const allowedTags = {
+  a: ['class', 'href', 'id', 'style', 'target', 'name'],
+  b: ['class', 'id', 'style'],
+  br: ['class', 'id', 'style'],
+  center: ['class', 'id', 'style'],
+  div: ['align', 'class', 'dir', 'id', 'style'],
+  font: ['class', 'color', 'face', 'id', 'size', 'style'],
+  h1: ['align', 'class', 'dir', 'id', 'style'],
+  h2: ['align', 'class', 'dir', 'id', 'style'],
+  h3: ['align', 'class', 'dir', 'id', 'style'],
+  h4: ['align', 'class', 'dir', 'id', 'style'],
+  h5: ['align', 'class', 'dir', 'id', 'style'],
+  h6: ['align', 'class', 'dir', 'id', 'style'],
+  hr: ['align', 'size', 'width'],
+  img: [
+    'align',
+    'border',
+    'class',
+    'height',
+    'hspace',
+    'id',
+    'src',
+    'style',
+    'usemap',
+    'vspace',
+    'width'
+  ],
+  label: ['class', 'id', 'style'],
+  li: ['class', 'dir', 'id', 'style', 'type'],
+  ol: ['class', 'dir', 'id', 'style', 'type'],
+  p: ['align', 'class', 'dir', 'id', 'style'],
+  span: ['class', 'id', 'style'],
+  strong: ['class', 'id', 'style'],
+  style: [],
+  table: [
+    'align',
+    'bgcolor',
+    'border',
+    'cellpadding',
+    'cellspacing',
+    'class',
+    'dir',
+    'frame',
+    'id',
+    'rules',
+    'style',
+    'width'
+  ],
+  tbody: ['class', 'id', 'style'],
+  td: [
+    'abbr',
+    'align',
+    'bgcolor',
+    'class',
+    'colspan',
+    'dir',
+    'height',
+    'id',
+    'lang',
+    'rowspan',
+    'scope',
+    'style',
+    'valign',
+    'width'
+  ],
+  th: [
+    'abbr',
+    'align',
+    'bgcolor',
+    'class',
+    'colspan',
+    'dir',
+    'height',
+    'id',
+    'lang',
+    'rowspan',
+    'scope',
+    'style',
+    'valign',
+    'width'
+  ],
+  thead: ['class', 'id', 'style'],
+  tr: ['align', 'bgcolor', 'class', 'dir', 'id', 'style', 'valign'],
+  u: ['class', 'id', 'style'],
+  ul: ['class', 'dir', 'id', 'style']
+} as { [k: string]: string[] };
+
+const removeWithContents = ['script', 'iframe', 'textarea', 'title'];
+
+function sanitizeHtml(input: string) {
+  const doc = new DOMParser().parseFromString(input, 'text/html');
+
+  // Remove comments.
+  const commentIter = doc.createNodeIterator(
+    doc.documentElement,
+    NodeFilter.SHOW_COMMENT
+  );
+
+  let node: Node | null;
+  while ((node = commentIter.nextNode())) {
+    node.parentNode?.removeChild(node);
+  }
+
+  // Remove disallowed tags.
+  const disallowedList = doc.querySelectorAll(removeWithContents.join(', '));
+  disallowedList.forEach(element => element.remove());
+
+  // Filter other tags.
+  const allList = doc.querySelectorAll('body *');
+  allList.forEach(element => {
+    const tagName = element.tagName.toLowerCase();
+    if (tagName in allowedTags) {
+      const allowedAttributes = allowedTags[tagName];
+      for (let attribute of element.getAttributeNames()) {
+        if (!allowedAttributes.includes(attribute)) {
+          element.removeAttribute(attribute);
+        }
+      }
+    } else {
+      console.log(tagName);
+      element.outerHTML = element.innerHTML;
+    }
+  });
+
+  // Move styles from head to body.
+  const styleList = doc.querySelectorAll('head > style');
+  styleList.forEach(element => {
+    doc.body.appendChild(element);
+  });
+
+  return doc.body.innerHTML;
+}
 
 export function sanitize(html: string, text?: string) {
   let contents = html ?? '';
   if (contents?.length === 0 && text) {
-    contents = sanitizeHtml(text, {
-      allowedTags: [],
-      allowedAttributes: {}
-    })
+    contents = sanitizeHtml(text)
       .split('\n')
       .map(line => '<p>' + line + '</p>')
       .join('\n');
   }
 
-  return sanitizeHtml(contents, {
-    allowedTags: [
-      'a',
-      'b',
-      'br',
-      'center',
-      'div',
-      'font',
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'h5',
-      'h6',
-      'hr',
-      'img',
-      'label',
-      'li',
-      'ol',
-      'p',
-      'span',
-      'strong',
-      'style',
-      'table',
-      'tbody',
-      'td',
-      'th',
-      'thead',
-      'tr',
-      'u',
-      'ul'
-    ],
-    allowedAttributes: {
-      a: ['class', 'href', 'id', 'style', 'target', 'name'],
-      b: ['class', 'id', 'style'],
-      br: ['class', 'id', 'style'],
-      center: ['class', 'id', 'style'],
-      div: ['align', 'class', 'dir', 'id', 'style'],
-      font: ['class', 'color', 'face', 'id', 'size', 'style'],
-      h1: ['align', 'class', 'dir', 'id', 'style'],
-      h2: ['align', 'class', 'dir', 'id', 'style'],
-      h3: ['align', 'class', 'dir', 'id', 'style'],
-      h4: ['align', 'class', 'dir', 'id', 'style'],
-      h5: ['align', 'class', 'dir', 'id', 'style'],
-      h6: ['align', 'class', 'dir', 'id', 'style'],
-      hr: ['align', 'size', 'width'],
-      img: [
-        'align',
-        'border',
-        'class',
-        'height',
-        'hspace',
-        'id',
-        'src',
-        'style',
-        'usemap',
-        'vspace',
-        'width'
-      ],
-      label: ['class', 'id', 'style'],
-      li: ['class', 'dir', 'id', 'style', 'type'],
-      ol: ['class', 'dir', 'id', 'style', 'type'],
-      p: ['align', 'class', 'dir', 'id', 'style'],
-      span: ['class', 'id', 'style'],
-      strong: ['class', 'id', 'style'],
-      style: [],
-      table: [
-        'align',
-        'bgcolor',
-        'border',
-        'cellpadding',
-        'cellspacing',
-        'class',
-        'dir',
-        'frame',
-        'id',
-        'rules',
-        'style',
-        'width'
-      ],
-      tbody: ['class', 'id', 'style'],
-      td: [
-        'abbr',
-        'align',
-        'bgcolor',
-        'class',
-        'colspan',
-        'dir',
-        'height',
-        'id',
-        'lang',
-        'rowspan',
-        'scope',
-        'style',
-        'valign',
-        'width'
-      ],
-      th: [
-        'abbr',
-        'align',
-        'bgcolor',
-        'class',
-        'colspan',
-        'dir',
-        'height',
-        'id',
-        'lang',
-        'rowspan',
-        'scope',
-        'style',
-        'valign',
-        'width'
-      ],
-      thead: ['class', 'id', 'style'],
-      tr: ['align', 'bgcolor', 'class', 'dir', 'id', 'style', 'valign'],
-      u: ['class', 'id', 'style'],
-      ul: ['class', 'dir', 'id', 'style']
-    }
-  });
+  return sanitizeHtml(contents);
 }

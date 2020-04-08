@@ -20,7 +20,7 @@ export const Letter: React.FC<LetterProps> = ({ message }) => {
 
   return (
     <div>
-      <iframe srcDoc={html} title={subject} />
+      <iframe srcDoc={html} title={subject} width="800px" height="600px" />
     </div>
   );
 };
