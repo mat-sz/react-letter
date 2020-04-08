@@ -138,17 +138,33 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
   });
 
   // Filter other tags.
-  const allList = doc.querySelectorAll('body *');
-  allList.forEach(element => {
-    if (dropAllTags) {
-      if (element.textContent) {
-        const textNode = doc.createTextNode(element.textContent);
-        element.parentNode?.replaceChild(textNode, element);
+  const toRemove: Element[] = [];
+  const elementIter = doc.createNodeIterator(
+    doc.body,
+    NodeFilter.SHOW_ELEMENT,
+    {
+      acceptNode: () => {
+        return NodeFilter.FILTER_ACCEPT;
       }
-      return;
+    }
+  );
+
+  while ((node = elementIter.nextNode())) {
+    if (dropAllTags) {
+      if (node.textContent) {
+        const textNode = doc.createTextNode(node.textContent);
+        node.parentNode?.replaceChild(textNode, node);
+      }
+
+      continue;
     }
 
+    const element = node as HTMLElement;
     const tagName = element.tagName.toLowerCase();
+    if (tagName === 'body') {
+      continue;
+    }
+
     if (tagName in allowedTags) {
       const allowedAttributes = allowedTags[tagName];
       for (let attribute of element.getAttributeNames()) {
@@ -157,9 +173,21 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
         }
       }
     } else {
-      element.outerHTML = element.innerHTML;
+      element.insertAdjacentHTML('afterend', element.innerHTML);
+      toRemove.push(element);
     }
-  });
+  }
+
+  for (let element of toRemove) {
+    try {
+      element.parentNode?.removeChild(element);
+      if (!element.parentNode) {
+        element.outerHTML = '';
+      }
+    } catch {
+      element.outerHTML = '';
+    }
+  }
 
   // Prepend wrapper ID.
   const bodyStyleList = doc.querySelectorAll('body style');
@@ -192,10 +220,10 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
     styleElement.textContent = newRules.map(rule => rule.cssText).join('\n');
   });
 
+  // Wrap body inside of a div with the generated ID.
   const div = doc.createElement('div');
   div.id = id;
   div.innerHTML = doc.body.innerHTML;
-
   return div.outerHTML;
 }
 
