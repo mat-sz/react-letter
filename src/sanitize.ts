@@ -94,6 +94,8 @@ const removeWithContents = [
   'noembed'
 ];
 
+const removeCssRules = ['-moz-binding', 'binding', 'behavior'];
+
 interface SanitizerOptions {
   id?: string;
   dropAllHtmlTags?: boolean;
@@ -150,6 +152,10 @@ function sanitizeCssRule(
   rewriteExternalResources?: (url: string) => string
 ) {
   rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
+
+  for (let name of removeCssRules) {
+    rule.style.removeProperty(name);
+  }
 
   for (let i = 0; i < rule.style.length; i++) {
     const name = rule.style.item(i);
