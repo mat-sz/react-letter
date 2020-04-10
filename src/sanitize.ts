@@ -227,18 +227,20 @@ function sanitizeHtml(
   );
 
   while ((node = elementIter.nextNode())) {
+    const element = node as HTMLElement;
+    const tagName = element.tagName.toLowerCase();
+    if (tagName === 'body' || tagName === 'html') {
+      continue;
+    }
+
     if (dropAllHtmlTags) {
       if (node.textContent) {
         const textNode = doc.createTextNode(node.textContent);
         node.parentNode?.replaceChild(textNode, node);
+      } else {
+        node.parentNode?.removeChild(node);
       }
 
-      continue;
-    }
-
-    const element = node as HTMLElement;
-    const tagName = element.tagName.toLowerCase();
-    if (tagName === 'body') {
       continue;
     }
 
