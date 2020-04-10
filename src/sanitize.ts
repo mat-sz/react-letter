@@ -340,6 +340,12 @@ function sanitizeHtml(
   return div.outerHTML;
 }
 
+function sanitizeText(text: string) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 export function sanitize(
   html: string,
   text?: string,
@@ -347,9 +353,7 @@ export function sanitize(
 ) {
   let contents = html ?? '';
   if (contents?.length === 0 && text) {
-    contents = sanitizeHtml(text, {
-      dropAllHtmlTags: true
-    })
+    contents = sanitizeText(text)
       .split('\n')
       .map(line => '<p>' + line + '</p>')
       .join('\n');
