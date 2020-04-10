@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { extract, LetterparserNode } from 'letterparser';
 
-import { sanitize } from './sanitize';
+import { RawLetter } from './RawLetter';
 
 export interface LetterProps {
   /**
@@ -27,23 +27,23 @@ export const Letter: React.FC<LetterProps> = ({
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [html, setHtml] = useState<string>('');
+  const [text, setText] = useState<string>();
   const [subject, setSubject] = useState<string>();
 
   useEffect(() => {
     const mail = extract(message);
     setSubject(mail.subject);
-    setHtml(sanitize(mail.html ?? '', mail.text));
-  }, [message, setHtml, setSubject, iframeRef]);
+    setHtml(mail.html ?? '');
+    setText(mail.text);
+  }, [message, setHtml, setText, setSubject, iframeRef]);
 
-  if (useIframe) {
-    return (
-      <div className={className}>
-        <iframe srcDoc={html} title={subject} />
-      </div>
-    );
-  } else {
-    return (
-      <div className={className} dangerouslySetInnerHTML={{ __html: html }} />
-    );
-  }
+  return (
+    <RawLetter
+      html={html}
+      text={text}
+      iframeTitle={subject}
+      className={className}
+      useIframe={useIframe}
+    />
+  );
 };
