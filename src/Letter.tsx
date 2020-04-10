@@ -1,31 +1,17 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { extract, LetterparserNode } from 'letterparser';
 
-import { RawLetter } from './RawLetter';
+import { RawLetter, RawLetterProps } from './RawLetter';
 
-export interface LetterProps {
+export interface LetterProps extends Omit<RawLetterProps, 'text' | 'html'> {
   /**
    * The e-mail contents to use, either as a raw RFC 822 message or output from letterparser.
    */
   message: string | LetterparserNode;
-
-  /**
-   * Should the HTML be wrapped in an iframe. Default: false.
-   */
-  useIframe?: boolean;
-
-  /**
-   * Class name of the wrapper div.
-   */
-  className?: string;
 }
 
-export const Letter: React.FC<LetterProps> = ({
-  message,
-  useIframe,
-  className
-}) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+export const Letter: React.FC<LetterProps> = props => {
+  const { message } = props;
   const [html, setHtml] = useState<string>('');
   const [text, setText] = useState<string>();
   const [subject, setSubject] = useState<string>();
@@ -35,15 +21,7 @@ export const Letter: React.FC<LetterProps> = ({
     setSubject(mail.subject);
     setHtml(mail.html ?? '');
     setText(mail.text);
-  }, [message, setHtml, setText, setSubject, iframeRef]);
+  }, [message, setHtml, setText, setSubject]);
 
-  return (
-    <RawLetter
-      html={html}
-      text={text}
-      iframeTitle={subject}
-      className={className}
-      useIframe={useIframe}
-    />
-  );
+  return <RawLetter html={html} text={text} iframeTitle={subject} {...props} />;
 };
