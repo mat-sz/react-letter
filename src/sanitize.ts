@@ -94,6 +94,13 @@ const removeWithContents = [
   'noembed'
 ];
 
+interface SanitizerOptions {
+  id?: string;
+  dropAllHtmlTags?: boolean;
+  rewriteExternalResources?: (url: string) => string;
+  rewriteExternalLinks?: (url: string) => string;
+}
+
 function prependIdToSelectorText(selectorText: string, id: string) {
   return selectorText
     .split(',')
@@ -111,7 +118,10 @@ function prependIdToSelectorText(selectorText: string, id: string) {
     .join(',');
 }
 
-function sanitizeCssUrl(cssValue: string) {
+function sanitizeCssUrl(
+  cssValue: string,
+  rewriteExternalResources?: (url: string) => string
+) {
   return cssValue
     .split(' ')
     .map(atom => atom.trim())
@@ -119,7 +129,11 @@ function sanitizeCssUrl(cssValue: string) {
       if (atom.startsWith('url(')) {
         const start = atom.replace(/url\(([\'\"])?/, '');
         if (start.startsWith('http://') || start.startsWith('https://')) {
-          return atom;
+          if (rewriteExternalResources) {
+            return rewriteExternalResources(atom);
+          } else {
+            return atom;
+          }
         } else {
           return '';
         }
@@ -130,26 +144,39 @@ function sanitizeCssUrl(cssValue: string) {
     .join(' ');
 }
 
-function sanitizeCssRule(rule: CSSStyleRule, id: string) {
+function sanitizeCssRule(
+  rule: CSSStyleRule,
+  id: string,
+  rewriteExternalResources?: (url: string) => string
+) {
   rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
 
   for (let i = 0; i < rule.style.length; i++) {
     const name = rule.style.item(i);
     const value = rule.style.getPropertyValue(name);
 
-    rule.style.setProperty(name, sanitizeCssUrl(value));
+    rule.style.setProperty(
+      name,
+      sanitizeCssUrl(value, rewriteExternalResources)
+    );
   }
 }
 
-function sanitizeHtml(input: string, dropAllTags?: boolean) {
+function sanitizeHtml(
+  input: string,
+  {
+    dropAllHtmlTags = false,
+    rewriteExternalLinks,
+    rewriteExternalResources,
+    id = 'msg_' +
+      String.fromCharCode(
+        ...new Array(24)
+          .fill(undefined)
+          .map(_ => ((Math.random() * 25) % 25) + 65)
+      )
+  }: SanitizerOptions
+) {
   const doc = new DOMParser().parseFromString(input, 'text/html');
-  const id =
-    'msg_' +
-    String.fromCharCode(
-      ...new Array(24)
-        .fill(undefined)
-        .map(_ => ((Math.random() * 25) % 25) + 65)
-    );
 
   // Remove comments.
   const commentIter = doc.createNodeIterator(
@@ -163,7 +190,7 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
   }
 
   const removeTags = [...removeWithContents];
-  if (dropAllTags) {
+  if (dropAllHtmlTags) {
     removeTags.push('style');
   }
 
@@ -190,7 +217,7 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
   );
 
   while ((node = elementIter.nextNode())) {
-    if (dropAllTags) {
+    if (dropAllHtmlTags) {
       if (node.textContent) {
         const textNode = doc.createTextNode(node.textContent);
         node.parentNode?.replaceChild(textNode, node);
@@ -228,6 +255,10 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
           const value = element.getAttribute(attribute) ?? '';
           if (!value.startsWith('https://') && !value.startsWith('http://')) {
             element.removeAttribute(attribute);
+          } else if (attribute === 'href' && rewriteExternalLinks) {
+            element.setAttribute(attribute, rewriteExternalLinks(value));
+          } else if (attribute === 'src' && rewriteExternalResources) {
+            element.setAttribute(attribute, rewriteExternalResources(value));
           }
         }
       }
@@ -259,7 +290,7 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
       const rule = stylesheet.cssRules.item(i) as CSSStyleRule;
 
       if (rule.type === rule.STYLE_RULE) {
-        sanitizeCssRule(rule, id);
+        sanitizeCssRule(rule, id, rewriteExternalResources);
         newRules.push(rule);
       } else if (rule.type === rule.MEDIA_RULE && 'cssRules' in rule) {
         const mediaRule = rule as CSSMediaRule;
@@ -269,7 +300,7 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
           const rule = mediaRule.cssRules.item(i) as CSSStyleRule;
 
           if (rule.type === rule.STYLE_RULE) {
-            sanitizeCssRule(rule, id);
+            sanitizeCssRule(rule, id, rewriteExternalResources);
             newRulesMedia.push(rule);
           }
         }
@@ -296,14 +327,20 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
   return div.outerHTML;
 }
 
-export function sanitize(html: string, text?: string) {
+export function sanitize(
+  html: string,
+  text?: string,
+  options?: SanitizerOptions
+) {
   let contents = html ?? '';
   if (contents?.length === 0 && text) {
-    contents = sanitizeHtml(text, true)
+    contents = sanitizeHtml(text, {
+      dropAllHtmlTags: true
+    })
       .split('\n')
       .map(line => '<p>' + line + '</p>')
       .join('\n');
   }
 
-  return sanitizeHtml(contents);
+  return sanitizeHtml(contents, options ?? {});
 }
