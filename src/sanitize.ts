@@ -120,13 +120,13 @@ function prependIdToSelectorText(selectorText: string, id: string) {
     .join(',');
 }
 
-function sanitizeCssUrl(
+function sanitizeCssValue(
   cssValue: string,
   rewriteExternalResources?: (url: string) => string
 ) {
   return cssValue
     .split(' ')
-    .map(atom => atom.trim())
+    .map(atom => atom.trim().replace(/expression\((.*?)\)/g, ''))
     .map(atom => {
       if (atom.startsWith('url(')) {
         const start = atom.replace(/url\(([\'\"])?/, '');
@@ -146,26 +146,29 @@ function sanitizeCssUrl(
     .join(' ');
 }
 
+function sanitizeCssStyle(
+  style: CSSStyleDeclaration,
+  rewriteExternalResources?: (url: string) => string
+) {
+  for (let name of removeCssRules) {
+    style.removeProperty(name);
+  }
+
+  for (let i = 0; i < style.length; i++) {
+    const name = style.item(i);
+    const value = style.getPropertyValue(name);
+
+    style.setProperty(name, sanitizeCssValue(value, rewriteExternalResources));
+  }
+}
+
 function sanitizeCssRule(
   rule: CSSStyleRule,
   id: string,
   rewriteExternalResources?: (url: string) => string
 ) {
   rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
-
-  for (let name of removeCssRules) {
-    rule.style.removeProperty(name);
-  }
-
-  for (let i = 0; i < rule.style.length; i++) {
-    const name = rule.style.item(i);
-    const value = rule.style.getPropertyValue(name);
-
-    rule.style.setProperty(
-      name,
-      sanitizeCssUrl(value, rewriteExternalResources)
-    );
-  }
+  sanitizeCssStyle(rule.style, rewriteExternalResources);
 }
 
 function sanitizeHtml(
@@ -268,6 +271,9 @@ function sanitizeHtml(
           }
         }
       }
+
+      // Sanitize CSS.
+      sanitizeCssStyle(element.style, rewriteExternalResources);
     } else {
       element.insertAdjacentHTML('afterend', element.innerHTML);
       toRemove.push(element);
