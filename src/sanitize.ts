@@ -99,10 +99,11 @@ function prependIdToSelectorText(selectorText: string, id: string) {
     .split(',')
     .map(selector => selector.trim())
     .map(selector => {
-      if (selector.toLowerCase().startsWith('body')) {
-        return '#' + id + ' ' + selector.substring(4);
+      const s = selector.replace(/\./g, '.' + id + '_');
+      if (s.toLowerCase().startsWith('body')) {
+        return '#' + id + ' ' + s.substring(4);
       } else {
-        return '#' + id + ' ' + selector;
+        return '#' + id + ' ' + s;
       }
     })
     .join(',');
@@ -177,6 +178,15 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
       for (let attribute of element.getAttributeNames()) {
         if (!allowedAttributes.includes(attribute)) {
           element.removeAttribute(attribute);
+        } else if (attribute === 'class') {
+          element.setAttribute(
+            attribute,
+            element
+              .getAttribute('class')
+              ?.split(' ')
+              .map(className => id + '_' + className)
+              .join(' ') ?? ''
+          );
         }
       }
     } else {
