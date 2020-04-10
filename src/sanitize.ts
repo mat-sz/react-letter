@@ -111,6 +111,36 @@ function prependIdToSelectorText(selectorText: string, id: string) {
     .join(',');
 }
 
+function sanitizeCssUrl(cssValue: string) {
+  return cssValue
+    .split(' ')
+    .map(atom => atom.trim())
+    .map(atom => {
+      if (atom.startsWith('url(')) {
+        const start = atom.replace(/url\(([\'\"])?/, '');
+        if (start.startsWith('http://') || start.startsWith('https://')) {
+          return atom;
+        } else {
+          return '';
+        }
+      } else {
+        return atom;
+      }
+    })
+    .join(' ');
+}
+
+function sanitizeCssRule(rule: CSSStyleRule, id: string) {
+  rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
+
+  for (let i = 0; i < rule.style.length; i++) {
+    const name = rule.style.item(i);
+    const value = rule.style.getPropertyValue(name);
+
+    rule.style.setProperty(name, sanitizeCssUrl(value));
+  }
+}
+
 function sanitizeHtml(input: string, dropAllTags?: boolean) {
   const doc = new DOMParser().parseFromString(input, 'text/html');
   const id =
@@ -194,6 +224,11 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
             attribute,
             id + '_' + (element.getAttribute(attribute) ?? '')
           );
+        } else if (attribute === 'href' || attribute === 'src') {
+          const value = element.getAttribute(attribute) ?? '';
+          if (!value.startsWith('https://') && !value.startsWith('http://')) {
+            element.removeAttribute(attribute);
+          }
         }
       }
     } else {
@@ -218,26 +253,36 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
   bodyStyleList.forEach(element => {
     const styleElement = element as HTMLStyleElement;
     const stylesheet = styleElement.sheet as CSSStyleSheet;
-    const newRules: CSSStyleRule[] = [];
+    const newRules: CSSRule[] = [];
 
     for (let i = 0; i < stylesheet.cssRules.length; i++) {
       const rule = stylesheet.cssRules.item(i) as CSSStyleRule;
 
       if (rule.type === rule.STYLE_RULE) {
-        rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
+        sanitizeCssRule(rule, id);
         newRules.push(rule);
       } else if (rule.type === rule.MEDIA_RULE && 'cssRules' in rule) {
         const mediaRule = rule as CSSMediaRule;
+        let newRulesMedia: CSSRule[] = [];
 
         for (let i = 0; i < mediaRule.cssRules.length; i++) {
           const rule = mediaRule.cssRules.item(i) as CSSStyleRule;
 
-          if (rule.selectorText) {
-            rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
+          if (rule.type === rule.STYLE_RULE) {
+            sanitizeCssRule(rule, id);
+            newRulesMedia.push(rule);
           }
         }
 
-        newRules.push(rule);
+        while (mediaRule.cssRules.length > 0) {
+          mediaRule.deleteRule(0);
+        }
+
+        for (let rule of newRulesMedia) {
+          mediaRule.insertRule(rule.cssText, mediaRule.cssRules.length);
+        }
+
+        newRules.push(mediaRule);
       }
     }
 
