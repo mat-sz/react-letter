@@ -299,6 +299,11 @@ function sanitizeHtml(
     const stylesheet = styleElement.sheet as CSSStyleSheet;
     const newRules: CSSRule[] = [];
 
+    if (!stylesheet.cssRules || !stylesheet.cssRules.item) {
+      styleElement.textContent = '';
+      return;
+    }
+
     for (let i = 0; i < stylesheet.cssRules.length; i++) {
       const rule = stylesheet.cssRules.item(i) as CSSStyleRule;
 
