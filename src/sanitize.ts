@@ -99,7 +99,9 @@ function prependIdToSelectorText(selectorText: string, id: string) {
     .split(',')
     .map(selector => selector.trim())
     .map(selector => {
-      const s = selector.replace(/\./g, '.' + id + '_');
+      const s = selector
+        .replace(/\./g, '.' + id + '_')
+        .replace(/\#/g, '#' + id + '_');
       if (s.toLowerCase().startsWith('body')) {
         return '#' + id + ' ' + s.substring(4);
       } else {
@@ -182,10 +184,15 @@ function sanitizeHtml(input: string, dropAllTags?: boolean) {
           element.setAttribute(
             attribute,
             element
-              .getAttribute('class')
+              .getAttribute(attribute)
               ?.split(' ')
               .map(className => id + '_' + className)
               .join(' ') ?? ''
+          );
+        } else if (attribute === 'id') {
+          element.setAttribute(
+            attribute,
+            id + '_' + (element.getAttribute(attribute) ?? '')
           );
         }
       }
