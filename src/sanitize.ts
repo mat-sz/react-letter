@@ -96,7 +96,7 @@ const removeWithContents = [
 
 const removeCssRules = ['-moz-binding', 'binding', 'behavior'];
 
-interface SanitizerOptions {
+export interface SanitizerOptions {
   id?: string;
   dropAllHtmlTags?: boolean;
   rewriteExternalResources?: (url: string) => string;
