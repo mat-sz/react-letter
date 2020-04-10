@@ -5,9 +5,10 @@ import { sanitize } from './sanitize';
 
 export interface LetterProps {
   message: string | LetterparserNode;
+  className?: string;
 }
 
-export const Letter: React.FC<LetterProps> = ({ message }) => {
+export const Letter: React.FC<LetterProps> = ({ message, className }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [html, setHtml] = useState<string>();
   const [subject, setSubject] = useState<string>();
@@ -19,7 +20,7 @@ export const Letter: React.FC<LetterProps> = ({ message }) => {
   }, [message, setHtml, setSubject, iframeRef]);
 
   return (
-    <div>
+    <div className={className}>
       <iframe srcDoc={html} title={subject} width="800px" height="600px" />
     </div>
   );
