@@ -125,25 +125,26 @@ function sanitizeCssValue(
   rewriteExternalResources?: (url: string) => string
 ) {
   return cssValue
-    .split(' ')
-    .map(atom => atom.trim().replace(/expression\((.*?)\)/g, ''))
-    .map(atom => {
-      if (atom.startsWith('url(')) {
-        const start = atom.replace(/url\(([\'\"])?/, '');
-        if (start.startsWith('http://') || start.startsWith('https://')) {
-          if (rewriteExternalResources) {
-            return rewriteExternalResources(atom);
-          } else {
-            return atom;
-          }
+    .trim()
+    .replace(/expression\((.*?)\)/g, '')
+    .replace(/url\([\"\']?(.*?)[\"\']?\)/g, (match, url) => {
+      let quote = '';
+      if (match.startsWith('url("')) {
+        quote = '"';
+      } else if (match.startsWith("url('")) {
+        quote = "'";
+      }
+
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        if (rewriteExternalResources) {
+          return 'url(' + quote + rewriteExternalResources(url) + quote + ')';
         } else {
-          return '';
+          return match;
         }
       } else {
-        return atom;
+        return '';
       }
-    })
-    .join(' ');
+    });
 }
 
 function sanitizeCssStyle(
