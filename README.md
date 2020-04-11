@@ -4,7 +4,7 @@ Display e-mail messages in your React projects. The HTML content is automaticall
 
 ## Installation
 
-**react-letter** is [available on NPM](https://npmjs.org/package/react-letter), and can be installed with either npm or yarn:
+**react-letter** is [available on NPM](https://npmjs.com/package/react-letter), and can be installed with either npm or yarn:
 
 ```
 yarn add react-letter
@@ -14,39 +14,29 @@ yarn add react-letter
 
 [Example](https://github.com/mat-sz/react-letter/tree/master/example)
 
-### With [letterparser](https://github.com/mat-sz/letterparser):
-
-This is currently not recommended since letterparser is not fully functional yet, but is provided for future use:
+react-letter can be used with [letterparser](https://github.com/mat-sz/letterparser) (currently in development, but it's the only RFC 822 parser with browser support as far as I know) or any other parser like this:
 
 ```ts
 import { Letter } from 'react-letter';
+import { extract } from 'letter-parser';
 
-// ...
-<Letter
-  message={`Date: Wed, 01 Apr 2020 00:00:00 -0000
+const mail = extract(`Date: Wed, 01 Apr 2020 00:00:00 -0000
 From: A <a@example.com>
 To: B <b@example.com>
 Subject: Hello world!
 Mime-Version: 1.0
 Content-Type: text/html; charset=utf-8
 
-Some message.`}
-/>;
-```
+Some message.`);
 
-### With any other parser:
-
-```ts
-import { RawLetter } from 'react-letter';
-import { parse } from 'other-email-parser';
-
-// ...
-<RawLetter html={parse(message)} />;
+// No sanitization needs to be performed beforehand,
+// react-letter takes care of sanitizing the input.
+<Letter html={mail.html} text={mail.text} />;
 ```
 
 ## Configuration
 
-Both `Letter` and `RawLetter` support those properties:
+`Letter` supports the following properties:
 
 ### useIframe?: boolean;
 

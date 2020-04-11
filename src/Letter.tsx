@@ -1,27 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { extract, LetterparserNode } from 'letterparser';
+import React, { useMemo } from 'react';
 
-import { RawLetter, RawLetterProps } from './RawLetter';
+import { sanitize } from './sanitize';
 
-export interface LetterProps extends Omit<RawLetterProps, 'text' | 'html'> {
+export interface LetterProps {
   /**
-   * The e-mail contents to use, either as a raw RFC 822 message or output from letterparser.
+   * The HTML to use and sanitize.
    */
-  message: string | LetterparserNode;
+  html: string;
+
+  /**
+   * Fallback text if HTML is empty.
+   */
+  text?: string;
+
+  /**
+   * Should the HTML be wrapped in an iframe. Default: false.
+   */
+  useIframe?: boolean;
+
+  /**
+   * Iframe title, usually set to subject of the message.
+   */
+  iframeTitle?: string;
+
+  /**
+   * The result of this function will be used to rewrite the URLs for url(...) in CSS and src attributes in HTML.
+   */
+  rewriteExternalResources?: (url: string) => string;
+
+  /**
+   * The result of this function will be used to rewrite the URLs for href attributes in HTML.
+   */
+  rewriteExternalLinks?: (url: string) => string;
+
+  /**
+   * Class name of the wrapper div.
+   */
+  className?: string;
 }
 
 export const Letter: React.FC<LetterProps> = props => {
-  const { message } = props;
-  const [html, setHtml] = useState<string>('');
-  const [text, setText] = useState<string>();
-  const [subject, setSubject] = useState<string>();
+  const sanitizedHtml = useMemo(
+    () => sanitize(props.html, props.text, { ...props }),
+    [props]
+  );
 
-  useEffect(() => {
-    const mail = extract(message);
-    setSubject(mail.subject);
-    setHtml(mail.html ?? '');
-    setText(mail.text);
-  }, [message, setHtml, setText, setSubject]);
+  const { useIframe, className, iframeTitle } = props;
 
-  return <RawLetter html={html} text={text} iframeTitle={subject} {...props} />;
+  if (useIframe) {
+    return (
+      <div className={className}>
+        <iframe srcDoc={sanitizedHtml} title={iframeTitle} />
+      </div>
+    );
+  } else {
+    return (
+      <div
+        className={className}
+        dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+      />
+    );
+  }
 };
