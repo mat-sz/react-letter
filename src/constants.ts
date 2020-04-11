@@ -1,9 +1,19 @@
 export const allowedTags = {
   a: ['class', 'href', 'id', 'style', 'target'],
+  address: ['class', 'id', 'style'],
   b: ['class', 'id', 'style'],
+  blockquote: ['class', 'id', 'style'],
   br: ['class', 'id', 'style'],
+  caption: ['class', 'id', 'style'],
+  cite: ['class', 'id', 'style'],
+  code: ['class', 'id', 'style'],
+  col: ['class', 'id', 'style'],
+  colgroup: ['class', 'id', 'style'],
   center: ['class', 'id', 'style'],
+  dd: ['class', 'id', 'style'],
   div: ['align', 'class', 'dir', 'id', 'style'],
+  dt: ['class', 'id', 'style'],
+  em: ['class', 'id', 'style'],
   font: ['class', 'color', 'face', 'id', 'size', 'style'],
   h1: ['align', 'class', 'dir', 'id', 'style'],
   h2: ['align', 'class', 'dir', 'id', 'style'],
@@ -12,6 +22,7 @@ export const allowedTags = {
   h5: ['align', 'class', 'dir', 'id', 'style'],
   h6: ['align', 'class', 'dir', 'id', 'style'],
   hr: ['align', 'size', 'width'],
+  i: ['class', 'id', 'style'],
   img: [
     'align',
     'border',
@@ -26,12 +37,16 @@ export const allowedTags = {
     'width'
   ],
   label: ['class', 'id', 'style'],
+  legend: ['class', 'id', 'style'],
   li: ['class', 'dir', 'id', 'style', 'type'],
   ol: ['class', 'dir', 'id', 'style', 'type'],
   p: ['align', 'class', 'dir', 'id', 'style'],
+  pre: ['class', 'id', 'style'],
   span: ['class', 'id', 'style'],
   strong: ['class', 'id', 'style'],
   style: [],
+  sub: ['class', 'id', 'style'],
+  sup: ['class', 'id', 'style'],
   table: [
     'align',
     'bgcolor',
@@ -63,6 +78,7 @@ export const allowedTags = {
     'valign',
     'width'
   ],
+  tfoot: ['class', 'id', 'style'],
   th: [
     'abbr',
     'align',
