@@ -25,6 +25,14 @@ describe('sanitizer', () => {
     );
   });
 
+  it('removes non-whitelisted attributes', () => {
+    expect(
+      sanitize('<img onerror="alert(\'XSS\')" src="invalid:" />', '', {
+        id: 'test'
+      })
+    ).toBe('<div id="test"><img></div>');
+  });
+
   it('removes blacklisted tags and their contents', () => {
     expect(
       sanitize('<b>test</b><script>test</script>', '', { id: 'test' })
