@@ -32,7 +32,7 @@ react-letter can be used with [letterparser](https://github.com/mat-sz/letterpar
 
 ```ts
 import { Letter } from 'react-letter';
-import { extract } from 'letter-parser';
+import { extract } from 'letterparser';
 
 const mail = extract(`Date: Wed, 01 Apr 2020 00:00:00 -0000
 From: A <a@example.com>
