@@ -33,6 +33,14 @@ describe('sanitizer', () => {
     ).toBe('<div id="test"><img></div>');
   });
 
+  it('removes non-whitelisted CSS properties', () => {
+    expect(
+      sanitize('<a style="pointer-events: all;">test</a>', '', {
+        id: 'test'
+      })
+    ).toBe('<div id="test"><a style="">test</a></div>');
+  });
+
   it('removes blacklisted tags and their contents', () => {
     expect(
       sanitize('<b>test</b><script>test</script>', '', { id: 'test' })
