@@ -42,6 +42,17 @@
   "name": "react-letter",
   "author": "Mat Sz <contact@matsz.dev>",
   "module": "dist/react-letter.esm.js",
+  "license": "BSD-3-Clause-Clear",
+  "keywords": [
+    "react",
+    "react-component",
+    "email",
+    "e-mail",
+    "mail",
+    "mime-message",
+    "typescript",
+    "ui"
+  ],
   "devDependencies": {
     "@types/jest": "^25.2.1",
     "@types/react": "^16.9.32",
