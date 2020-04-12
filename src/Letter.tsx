@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { sanitize } from './sanitize';
 
@@ -39,12 +39,8 @@ export interface LetterProps {
   className?: string;
 }
 
-export const Letter: React.FC<LetterProps> = props => {
-  const sanitizedHtml = useMemo(
-    () => sanitize(props.html, props.text, { ...props }),
-    [props]
-  );
-
+export const Letter: React.FC<LetterProps> = React.memo(props => {
+  const sanitizedHtml = sanitize(props.html, props.text, { ...props });
   const { useIframe, className, iframeTitle } = props;
 
   if (useIframe) {
@@ -61,4 +57,4 @@ export const Letter: React.FC<LetterProps> = props => {
       />
     );
   }
-};
+});
