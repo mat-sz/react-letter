@@ -18,7 +18,7 @@ function prependIdToSelectorText(selectorText: string, id: string) {
     .map(selector => {
       const s = selector
         .replace(/\./g, '.' + id + '_')
-        .replace(/\#/g, '#' + id + '_');
+        .replace(/#/g, '#' + id + '_');
       if (s.toLowerCase().startsWith('body')) {
         return '#' + id + ' ' + s.substring(4);
       } else {
@@ -35,7 +35,7 @@ function sanitizeCssValue(
   return cssValue
     .trim()
     .replace(/expression\((.*?)\)/g, '')
-    .replace(/url\([\"\']?(.*?)[\"\']?\)/g, (match, url) => {
+    .replace(/url\(["']?(.*?)["']?\)/g, (match, url) => {
       let quote = '';
       if (match.startsWith('url("')) {
         quote = '"';
