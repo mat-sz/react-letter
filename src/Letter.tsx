@@ -39,17 +39,29 @@ export interface LetterProps {
   className?: string;
 }
 
-export const Letter: React.FC<LetterProps> = React.memo(props => {
-  const sanitizedHtml = sanitize(props.html, props.text, { ...props });
-  const { useIframe, className, iframeTitle } = props;
+export const Letter: React.FC<LetterProps> = React.memo(
+  ({
+    className,
+    html,
+    iframeTitle,
+    rewriteExternalLinks,
+    rewriteExternalResources,
+    text,
+    useIframe,
+  }) => {
+    const sanitizedHtml = sanitize(html, text, {
+      rewriteExternalResources,
+      rewriteExternalLinks,
+    });
 
-  if (useIframe) {
-    return (
-      <div className={className}>
-        <iframe srcDoc={sanitizedHtml} title={iframeTitle} />
-      </div>
-    );
-  } else {
+    if (useIframe) {
+      return (
+        <div className={className}>
+          <iframe srcDoc={sanitizedHtml} title={iframeTitle} />
+        </div>
+      );
+    }
+
     return (
       <div
         className={className}
@@ -57,4 +69,4 @@ export const Letter: React.FC<LetterProps> = React.memo(props => {
       />
     );
   }
-});
+);
