@@ -60,6 +60,9 @@ describe('sanitizer', () => {
     expect(sanitize('<b>test</b><title>test</title>', '', { id: 'test' })).toBe(
       '<div id="test"><b>test</b></div>'
     );
+    expect(sanitize('<b>test</b><svg><rect /></svg>', '', { id: 'test' })).toBe(
+      '<div id="test"><b>test</b></div>'
+    );
   });
 
   it('rewrites URLs on <a> elements', () => {

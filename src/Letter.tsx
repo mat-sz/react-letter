@@ -47,11 +47,11 @@ export const Letter: React.FC<LetterProps> = React.memo(
     rewriteExternalLinks,
     rewriteExternalResources,
     text,
-    useIframe,
+    useIframe
   }) => {
     const sanitizedHtml = sanitize(html, text, {
       rewriteExternalResources,
-      rewriteExternalLinks,
+      rewriteExternalLinks
     });
 
     if (useIframe) {

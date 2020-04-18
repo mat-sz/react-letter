@@ -107,7 +107,8 @@ export const removeWithContents = [
   'textarea',
   'title',
   'noscript',
-  'noembed'
+  'noembed',
+  'svg'
 ];
 
 export const allowedCssProperties = [
