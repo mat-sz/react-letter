@@ -26,7 +26,7 @@ yarn add react-letter
 
 ## Usage
 
-[Example](https://github.com/mat-sz/react-letter/tree/master/example)
+See or [Example](https://github.com/mat-sz/react-letter/tree/master/example) or play in [CodeSandbox](https://codesandbox.io/s/react-letter-basic-example-6lu9i).
 
 react-letter can be used with [letterparser](https://github.com/mat-sz/letterparser) (currently in development, but it's the only RFC 822 parser with browser support as far as I know) or any other parser like this:
 
