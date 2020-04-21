@@ -34,7 +34,7 @@ react-letter can be used with [letterparser](https://github.com/mat-sz/letterpar
 import { Letter } from 'react-letter';
 import { extract } from 'letterparser';
 
-const mail = extract(`Date: Wed, 01 Apr 2020 00:00:00 -0000
+const { html, text } = extract(`Date: Wed, 01 Apr 2020 00:00:00 -0000
 From: A <a@example.com>
 To: B <b@example.com>
 Subject: Hello world!
@@ -45,7 +45,22 @@ Some message.`);
 
 // No sanitization needs to be performed beforehand,
 // react-letter takes care of sanitizing the input.
-<Letter html={mail.html} text={mail.text} />;
+<Letter html={html} text={text} />;
+```
+
+### sanitize function
+
+react-letter also exposes a `sanitize` function that uses DOMParser to sanitize the HTML content of messages and returns HTML text. This allows for usage in other libraries without having to copy the code from react-letter.
+
+```ts
+interface SanitizerOptions {
+  id?: string;
+  dropAllHtmlTags?: boolean;
+  rewriteExternalResources?: (url: string) => string;
+  rewriteExternalLinks?: (url: string) => string;
+}
+
+function sanitize(html: string, text?: string, options?: SanitizerOptions);
 ```
 
 ## Configuration
