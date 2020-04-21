@@ -24,6 +24,8 @@ The component itself is parser-agnostic, and can be used with any RFC 822 parser
 yarn add react-letter
 ```
 
+**A Vue.js version is also available: [vue-letter](https://github.com/mat-sz/vue-letter).**
+
 ## Usage
 
 See: [Example](https://github.com/mat-sz/react-letter/tree/master/example) or play in the [CodeSandbox](https://codesandbox.io/s/react-letter-basic-example-6lu9i).
