@@ -5,9 +5,24 @@ import {
 } from './constants';
 
 export interface SanitizerOptions {
+  /**
+   * Wrapper element id.
+   */
   id?: string;
+
+  /**
+   * Removes all HTML tags from the contents.
+   */
   dropAllHtmlTags?: boolean;
+
+  /**
+   * Replaces CSS url() and src= attribute values with return values of this function.
+   */
   rewriteExternalResources?: (url: string) => string;
+
+  /**
+   * Replaces href= attribute values with return values of this function.
+   */
   rewriteExternalLinks?: (url: string) => string;
 }
 
