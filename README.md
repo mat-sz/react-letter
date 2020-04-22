@@ -16,6 +16,12 @@ Features:
 
 The component itself is parser-agnostic, and can be used with any RFC 822 parser as long as it provides HTML or text output. The sanitization is done on the client-side using DOMParser with some security features targeting older browsers (although there's no guarantee of full functionality under browser versions older than 5 years).
 
+**Check other TypeScript e-mail projects:**
+
+| Parser                                                 | Inbound SMTP                                   |
+| ------------------------------------------------------ | ---------------------------------------------- |
+| [letterparser](https://github.com/mat-sz/letterparser) | [microMTA](https://github.com/mat-sz/microMTA) |
+
 ## Installation
 
 **react-letter** is [available on NPM](https://npmjs.com/package/react-letter), and can be installed with either npm or yarn:
