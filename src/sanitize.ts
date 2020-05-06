@@ -24,6 +24,11 @@ export interface SanitizerOptions {
    * Replaces href= attribute values with return values of this function.
    */
   rewriteExternalLinks?: (url: string) => string;
+
+  /**
+   * Allowed schemas, default: ['http', 'https'].
+   */
+  allowedSchemas?: string[];
 }
 
 function prependIdToSelectorText(selectorText: string, id: string) {
@@ -45,6 +50,7 @@ function prependIdToSelectorText(selectorText: string, id: string) {
 
 function sanitizeCssValue(
   cssValue: string,
+  allowedSchemas: string[],
   rewriteExternalResources?: (url: string) => string
 ) {
   return cssValue
@@ -58,7 +64,7 @@ function sanitizeCssValue(
         quote = "'";
       }
 
-      if (url.startsWith('http://') || url.startsWith('https://')) {
+      if (allowedSchemas.includes(url.split(':')[0])) {
         if (rewriteExternalResources) {
           return 'url(' + quote + rewriteExternalResources(url) + quote + ')';
         } else {
@@ -72,6 +78,7 @@ function sanitizeCssValue(
 
 function sanitizeCssStyle(
   style: CSSStyleDeclaration,
+  allowedSchemas: string[],
   rewriteExternalResources?: (url: string) => string
 ) {
   const properties: string[] = [];
@@ -86,7 +93,7 @@ function sanitizeCssStyle(
       const value = style.getPropertyValue(name);
       style.setProperty(
         name,
-        sanitizeCssValue(value, rewriteExternalResources)
+        sanitizeCssValue(value, allowedSchemas, rewriteExternalResources)
       );
     } else {
       style.removeProperty(name);
@@ -97,10 +104,11 @@ function sanitizeCssStyle(
 function sanitizeCssRule(
   rule: CSSStyleRule,
   id: string,
+  allowedSchemas: string[],
   rewriteExternalResources?: (url: string) => string
 ) {
   rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
-  sanitizeCssStyle(rule.style, rewriteExternalResources);
+  sanitizeCssStyle(rule.style, allowedSchemas, rewriteExternalResources);
 }
 
 function sanitizeHtml(
@@ -114,7 +122,8 @@ function sanitizeHtml(
         ...new Array(24)
           .fill(undefined)
           .map(_ => ((Math.random() * 25) % 25) + 65)
-      )
+      ),
+    allowedSchemas = ['http', 'https']
   }: SanitizerOptions
 ) {
   const doc = new DOMParser().parseFromString(input, 'text/html');
@@ -196,7 +205,7 @@ function sanitizeHtml(
           );
         } else if (attribute === 'href' || attribute === 'src') {
           const value = element.getAttribute(attribute) ?? '';
-          if (!value.startsWith('https://') && !value.startsWith('http://')) {
+          if (!allowedSchemas.includes(value.split(':')[0])) {
             element.removeAttribute(attribute);
           } else if (attribute === 'href' && rewriteExternalLinks) {
             element.setAttribute(attribute, rewriteExternalLinks(value));
@@ -207,7 +216,7 @@ function sanitizeHtml(
       }
 
       // Sanitize CSS.
-      sanitizeCssStyle(element.style, rewriteExternalResources);
+      sanitizeCssStyle(element.style, allowedSchemas, rewriteExternalResources);
     } else {
       element.insertAdjacentHTML('afterend', element.innerHTML);
       toRemove.push(element);
@@ -241,7 +250,7 @@ function sanitizeHtml(
       const rule = stylesheet.cssRules.item(i) as CSSStyleRule;
 
       if (rule.type === rule.STYLE_RULE) {
-        sanitizeCssRule(rule, id, rewriteExternalResources);
+        sanitizeCssRule(rule, id, allowedSchemas, rewriteExternalResources);
         newRules.push(rule);
       } else if (rule.type === rule.MEDIA_RULE && 'cssRules' in rule) {
         const mediaRule = rule as CSSMediaRule;
@@ -251,7 +260,7 @@ function sanitizeHtml(
           const rule = mediaRule.cssRules.item(i) as CSSStyleRule;
 
           if (rule.type === rule.STYLE_RULE) {
-            sanitizeCssRule(rule, id, rewriteExternalResources);
+            sanitizeCssRule(rule, id, allowedSchemas, rewriteExternalResources);
             newRulesMedia.push(rule);
           }
         }

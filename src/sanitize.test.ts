@@ -123,6 +123,28 @@ describe('sanitizer', () => {
     ).toBe('<div id="test"><img src="https://example.com/img.png"></div>');
   });
 
+  it('allows URL schemas specified in allowedSchemas', () => {
+    expect(
+      sanitize('<a href="http://test.com"></a>', '', {
+        id: 'test',
+        allowedSchemas: ['http']
+      })
+    ).toBe('<div id="test"><a href="http://test.com"></a></div>');
+
+    expect(
+      sanitize(
+        '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" />',
+        '',
+        {
+          id: 'test',
+          allowedSchemas: ['data']
+        }
+      )
+    ).toBe(
+      '<div id="test"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="></div>'
+    );
+  });
+
   it('formats raw text', () => {
     expect(
       sanitize('', 'test', {
