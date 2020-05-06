@@ -84,4 +84,14 @@ describe('Letter', () => {
 
     expect(element.href).toBe('https://example.com/');
   });
+
+  it('passes allowedSchemas to sanitizer', () => {
+    const { container } = render(
+      <Letter html="<img src='cid:test'>" allowedSchemas={['cid']} />
+    );
+    const element = container.firstChild?.firstChild
+      ?.firstChild as HTMLImageElement;
+
+    expect(element.src).toBe('cid:test');
+  });
 });

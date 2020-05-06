@@ -34,6 +34,11 @@ export interface LetterProps {
   rewriteExternalLinks?: (url: string) => string;
 
   /**
+   * URL schemas allowed in src=, href= and url(). Default: ['http', 'https'].
+   */
+  allowedSchemas?: string[];
+
+  /**
    * Class name of the wrapper div.
    */
   className?: string;
@@ -46,12 +51,14 @@ export const Letter: React.FC<LetterProps> = React.memo(
     iframeTitle,
     rewriteExternalLinks,
     rewriteExternalResources,
+    allowedSchemas,
     text,
     useIframe
   }) => {
     const sanitizedHtml = sanitize(html, text, {
       rewriteExternalResources,
-      rewriteExternalLinks
+      rewriteExternalLinks,
+      allowedSchemas
     });
 
     if (useIframe) {

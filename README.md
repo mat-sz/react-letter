@@ -66,6 +66,7 @@ interface SanitizerOptions {
   dropAllHtmlTags?: boolean;
   rewriteExternalResources?: (url: string) => string;
   rewriteExternalLinks?: (url: string) => string;
+  allowedSchemas?: string[];
 }
 
 function sanitize(html: string, text?: string, options?: SanitizerOptions);
@@ -90,6 +91,10 @@ The result of this function will be used to rewrite the URLs for url(...) in CSS
 ### rewriteExternalLinks?: (url: string) => string;
 
 The result of this function will be used to rewrite the URLs for href attributes in HTML.
+
+### allowedSchemas?: string[];
+
+List of allowed URL schemas. Default: `['http', 'https']`.
 
 ### className?: string;
 
