@@ -91,6 +91,38 @@ describe('sanitizer', () => {
     );
   });
 
+  it('removes non-whitelisted URL schemas', () => {
+    expect(
+      sanitize('<a href="ftp://test.com"></a>', '', {
+        id: 'test'
+      })
+    ).toBe('<div id="test"><a></a></div>');
+
+    expect(
+      sanitize(
+        '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" />',
+        '',
+        {
+          id: 'test'
+        }
+      )
+    ).toBe('<div id="test"><img></div>');
+  });
+
+  it("doesn't remove whitelisted URL schemas", () => {
+    expect(
+      sanitize('<a href="http://test.com"></a>', '', {
+        id: 'test'
+      })
+    ).toBe('<div id="test"><a href="http://test.com"></a></div>');
+
+    expect(
+      sanitize('<img src="https://example.com/img.png" />', '', {
+        id: 'test'
+      })
+    ).toBe('<div id="test"><img src="https://example.com/img.png"></div>');
+  });
+
   it('formats raw text', () => {
     expect(
       sanitize('', 'test', {
