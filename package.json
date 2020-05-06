@@ -1,5 +1,5 @@
 {
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Display e-mail messages in your React projects.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
