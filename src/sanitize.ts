@@ -217,6 +217,11 @@ function sanitizeHtml(
 
       // Sanitize CSS.
       sanitizeCssStyle(element.style, allowedSchemas, rewriteExternalResources);
+
+      // Add rel="noopener noreferrer" to <a>
+      if (tagName === 'a') {
+        element.setAttribute('rel', 'noopener noreferrer');
+      }
     } else {
       element.insertAdjacentHTML('afterend', element.innerHTML);
       toRemove.push(element);
