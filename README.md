@@ -94,7 +94,7 @@ The result of this function will be used to rewrite the URLs for href attributes
 
 ### allowedSchemas?: string[];
 
-List of allowed URL schemas. Default: `['http', 'https']`.
+List of allowed URL schemas. Default: `['http', 'https', 'mailto']`.
 
 ### className?: string;
 

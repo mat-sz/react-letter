@@ -34,7 +34,7 @@ export interface LetterProps {
   rewriteExternalLinks?: (url: string) => string;
 
   /**
-   * URL schemas allowed in src=, href= and url(). Default: ['http', 'https'].
+   * URL schemas allowed in src=, href= and url(). Default: ['http', 'https', 'mailto'].
    */
   allowedSchemas?: string[];
 

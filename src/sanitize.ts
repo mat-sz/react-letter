@@ -26,7 +26,7 @@ export interface SanitizerOptions {
   rewriteExternalLinks?: (url: string) => string;
 
   /**
-   * Allowed schemas, default: ['http', 'https'].
+   * Allowed schemas, default: ['http', 'https', 'mailto'].
    */
   allowedSchemas?: string[];
 }
@@ -123,7 +123,7 @@ function sanitizeHtml(
           .fill(undefined)
           .map(_ => ((Math.random() * 25) % 25) + 65)
       ),
-    allowedSchemas = ['http', 'https']
+    allowedSchemas = ['http', 'https', 'mailto']
   }: SanitizerOptions
 ) {
   const doc = new DOMParser().parseFromString(input, 'text/html');

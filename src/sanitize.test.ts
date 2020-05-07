@@ -121,6 +121,12 @@ describe('sanitizer', () => {
         id: 'test'
       })
     ).toBe('<div id="test"><img src="https://example.com/img.png"></div>');
+
+    expect(
+      sanitize('<a href="mailto:test@example.com"></a>', '', {
+        id: 'test'
+      })
+    ).toBe('<div id="test"><a href="mailto:test@example.com"></a></div>');
   });
 
   it('allows URL schemas specified in allowedSchemas', () => {
