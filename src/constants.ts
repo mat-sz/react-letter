@@ -25,6 +25,7 @@ export const allowedTags = {
   i: ['class', 'id', 'style'],
   img: [
     'align',
+    'alt',
     'border',
     'class',
     'height',
