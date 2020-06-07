@@ -2,6 +2,15 @@
   <img src="https://raw.githubusercontent.com/mat-sz/react-letter/master/logo.png" alt="react-letter" width="700">
 </h1>
 
+<p align="center">
+<img alt="Travis (.com)" src="https://img.shields.io/travis/com/mat-sz/react-letter">
+<a href="https://npmjs.com/package/react-letter">
+<img alt="npm" src="https://img.shields.io/npm/v/react-letter">
+<img alt="npm" src="https://img.shields.io/npm/dw/react-letter">
+<img alt="NPM" src="https://img.shields.io/npm/l/react-letter">
+</a>
+</p>
+
 **react-letter** is a React.js component that allows for an easy display of HTML e-mail content with automatic sanitization. Support for features should match what is supported by Gmail.
 
 Features:
