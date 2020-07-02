@@ -202,4 +202,12 @@ describe('sanitizer', () => {
       })
     ).toBe('<div id="test"><div></div></div>');
   });
+
+  it('removes wrapper div when noWrapper is enabled', () => {
+    expect(
+      sanitize('<div></div>', '', {
+        noWrapper: true
+      })
+    ).toBe('<div></div>');
+  });
 });

@@ -76,6 +76,7 @@ interface SanitizerOptions {
   rewriteExternalResources?: (url: string) => string;
   rewriteExternalLinks?: (url: string) => string;
   allowedSchemas?: string[];
+  noWrapper?: boolean;
 }
 
 function sanitize(html: string, text?: string, options?: SanitizerOptions);
@@ -87,7 +88,7 @@ function sanitize(html: string, text?: string, options?: SanitizerOptions);
 
 ### useIframe?: boolean;
 
-Should the HTML be wrapped in an iframe. Default: false.
+Should the HTML be wrapped in an iframe. Default: `false`.
 
 ### iframeTitle?: string;
 

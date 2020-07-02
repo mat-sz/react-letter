@@ -29,6 +29,11 @@ export interface SanitizerOptions {
    * Allowed schemas, default: ['http', 'https', 'mailto'].
    */
   allowedSchemas?: string[];
+
+  /**
+   * Remove wrapper <div> from the output, default: false.
+   */
+  noWrapper?: boolean;
 }
 
 function prependIdToSelectorText(selectorText: string, id: string) {
@@ -123,7 +128,8 @@ function sanitizeHtml(
           .fill(undefined)
           .map(_ => ((Math.random() * 25) % 25) + 65)
       ),
-    allowedSchemas = ['http', 'https', 'mailto']
+    allowedSchemas = ['http', 'https', 'mailto'],
+    noWrapper = false
   }: SanitizerOptions
 ) {
   const doc = new DOMParser().parseFromString(input, 'text/html');
@@ -286,10 +292,14 @@ function sanitizeHtml(
   });
 
   // Wrap body inside of a div with the generated ID.
-  const div = doc.createElement('div');
-  div.id = id;
-  div.innerHTML = doc.body.innerHTML;
-  return div.outerHTML;
+  if (noWrapper) {
+    return doc.body.innerHTML;
+  } else {
+    const div = doc.createElement('div');
+    div.id = id;
+    div.innerHTML = doc.body.innerHTML;
+    return div.outerHTML;
+  }
 }
 
 function sanitizeText(text: string) {
