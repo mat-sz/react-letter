@@ -34,6 +34,11 @@ export interface SanitizerOptions {
    * Remove wrapper <div> from the output, default: false.
    */
   noWrapper?: boolean;
+
+  /**
+   * Preserves CSS priority (!important), default: true.
+   */
+  preserveCssPriority?: boolean;
 }
 
 function prependIdToSelectorText(selectorText: string, id: string) {
@@ -85,6 +90,7 @@ function sanitizeCssValue(
 function sanitizeCssStyle(
   style: CSSStyleDeclaration,
   allowedSchemas: string[],
+  preserveCssPriority: boolean,
   rewriteExternalResources?: (url: string) => string
 ) {
   const properties: string[] = [];
@@ -99,7 +105,8 @@ function sanitizeCssStyle(
       const value = style.getPropertyValue(name);
       style.setProperty(
         name,
-        sanitizeCssValue(value, allowedSchemas, rewriteExternalResources)
+        sanitizeCssValue(value, allowedSchemas, rewriteExternalResources),
+        preserveCssPriority ? style.getPropertyPriority(name) : undefined
       );
     } else {
       style.removeProperty(name);
@@ -111,10 +118,16 @@ function sanitizeCssRule(
   rule: CSSStyleRule,
   id: string,
   allowedSchemas: string[],
+  preserveCssPriority: boolean,
   rewriteExternalResources?: (url: string) => string
 ) {
   rule.selectorText = prependIdToSelectorText(rule.selectorText, id);
-  sanitizeCssStyle(rule.style, allowedSchemas, rewriteExternalResources);
+  sanitizeCssStyle(
+    rule.style,
+    allowedSchemas,
+    preserveCssPriority,
+    rewriteExternalResources
+  );
 }
 
 function sanitizeHtml(
@@ -130,6 +143,7 @@ function sanitizeHtml(
           .map(_ => ((Math.random() * 25) % 25) + 65)
       ),
     allowedSchemas = ['http', 'https', 'mailto'],
+    preserveCssPriority = true,
     noWrapper = false
   }: SanitizerOptions
 ) {
@@ -224,7 +238,12 @@ function sanitizeHtml(
       }
 
       // Sanitize CSS.
-      sanitizeCssStyle(element.style, allowedSchemas, rewriteExternalResources);
+      sanitizeCssStyle(
+        element.style,
+        allowedSchemas,
+        preserveCssPriority,
+        rewriteExternalResources
+      );
 
       // Add rel="noopener noreferrer" to <a>
       if (tagName === 'a') {
@@ -263,7 +282,13 @@ function sanitizeHtml(
       const rule = stylesheet.cssRules.item(i) as CSSStyleRule;
 
       if (rule.type === rule.STYLE_RULE) {
-        sanitizeCssRule(rule, id, allowedSchemas, rewriteExternalResources);
+        sanitizeCssRule(
+          rule,
+          id,
+          allowedSchemas,
+          preserveCssPriority,
+          rewriteExternalResources
+        );
         newRules.push(rule);
       } else if (rule.type === rule.MEDIA_RULE && 'cssRules' in rule) {
         const mediaRule = rule as CSSMediaRule;
@@ -273,7 +298,13 @@ function sanitizeHtml(
           const rule = mediaRule.cssRules.item(i) as CSSStyleRule;
 
           if (rule.type === rule.STYLE_RULE) {
-            sanitizeCssRule(rule, id, allowedSchemas, rewriteExternalResources);
+            sanitizeCssRule(
+              rule,
+              id,
+              allowedSchemas,
+              preserveCssPriority,
+              rewriteExternalResources
+            );
             newRulesMedia.push(rule);
           }
         }

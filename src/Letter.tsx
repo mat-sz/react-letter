@@ -42,6 +42,11 @@ export interface LetterProps {
    * Class name of the wrapper div.
    */
   className?: string;
+
+  /**
+   * Preserves CSS priority (!important), default: true.
+   */
+  preserveCssPriority?: boolean;
 }
 
 export const Letter: React.FC<LetterProps> = React.memo(
@@ -52,13 +57,15 @@ export const Letter: React.FC<LetterProps> = React.memo(
     rewriteExternalLinks,
     rewriteExternalResources,
     allowedSchemas,
+    preserveCssPriority,
     text,
     useIframe
   }) => {
     const sanitizedHtml = sanitize(html, text, {
       rewriteExternalResources,
       rewriteExternalLinks,
-      allowedSchemas
+      allowedSchemas,
+      preserveCssPriority
     });
 
     if (useIframe) {

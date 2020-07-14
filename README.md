@@ -76,6 +76,7 @@ interface SanitizerOptions {
   rewriteExternalResources?: (url: string) => string;
   rewriteExternalLinks?: (url: string) => string;
   allowedSchemas?: string[];
+  preserveCssPriority?: boolean;
   noWrapper?: boolean;
 }
 
@@ -105,6 +106,10 @@ The result of this function will be used to rewrite the URLs for href attributes
 ### allowedSchemas?: string[];
 
 List of allowed URL schemas. Default: `['http', 'https', 'mailto']`.
+
+### preserveCssPriority?: boolean;
+
+Preserves CSS priority (!important), default: `true`.
 
 ### className?: string;
 
