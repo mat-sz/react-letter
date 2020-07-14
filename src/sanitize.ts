@@ -96,7 +96,7 @@ function sanitizeCssStyle(
   const properties: string[] = [];
 
   for (let i = 0; i < style.length; i++) {
-    const name = style.item(i);
+    const name = style[i];
     properties.push(name);
   }
 
@@ -273,15 +273,15 @@ function sanitizeHtml(
     const stylesheet = styleElement.sheet as CSSStyleSheet;
     const newRules: CSSRule[] = [];
 
-    if (!stylesheet.cssRules || !stylesheet.cssRules.item) {
+    if (!stylesheet.cssRules) {
       styleElement.textContent = '';
       return;
     }
 
     for (let i = 0; i < stylesheet.cssRules.length; i++) {
-      const rule = stylesheet.cssRules.item(i) as CSSStyleRule;
+      const rule = stylesheet.cssRules[i] as CSSStyleRule;
 
-      if (rule.type === rule.STYLE_RULE) {
+      if ('selectorText' in rule) {
         sanitizeCssRule(
           rule,
           id,
@@ -290,12 +290,12 @@ function sanitizeHtml(
           rewriteExternalResources
         );
         newRules.push(rule);
-      } else if (rule.type === rule.MEDIA_RULE && 'cssRules' in rule) {
+      } else if ('cssRules' in rule) {
         const mediaRule = rule as CSSMediaRule;
         let newRulesMedia: CSSRule[] = [];
 
         for (let i = 0; i < mediaRule.cssRules.length; i++) {
-          const rule = mediaRule.cssRules.item(i) as CSSStyleRule;
+          const rule = mediaRule.cssRules[i] as CSSStyleRule;
 
           if (rule.type === rule.STYLE_RULE) {
             sanitizeCssRule(
