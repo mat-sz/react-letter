@@ -37,6 +37,7 @@ export interface SanitizerOptions {
 }
 
 function prependIdToSelectorText(selectorText: string, id: string) {
+  if (!id) return selectorText;
   return selectorText
     .split(',')
     .map(selector => selector.trim())
@@ -132,6 +133,7 @@ function sanitizeHtml(
     noWrapper = false
   }: SanitizerOptions
 ) {
+  if (noWrapper) id = '';
   const doc = new DOMParser().parseFromString(input, 'text/html');
 
   // Remove comments.
@@ -195,7 +197,7 @@ function sanitizeHtml(
       for (let attribute of element.getAttributeNames()) {
         if (!allowedAttributes.includes(attribute)) {
           element.removeAttribute(attribute);
-        } else if (attribute === 'class') {
+        } else if (attribute === 'class' && !noWrapper) {
           element.setAttribute(
             attribute,
             element
@@ -204,7 +206,7 @@ function sanitizeHtml(
               .map(className => id + '_' + className)
               .join(' ') ?? ''
           );
-        } else if (attribute === 'id') {
+        } else if (attribute === 'id' && !noWrapper) {
           element.setAttribute(
             attribute,
             id + '_' + (element.getAttribute(attribute) ?? '')
