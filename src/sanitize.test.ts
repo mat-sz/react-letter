@@ -186,13 +186,16 @@ describe('sanitizer', () => {
     ).toBe('<div id="test"><p>test</p>\n<p>test</p></div>');
   });
 
-  // Seems like the jest implementation of DOMParser doesn't do well with <style> tags.
   it('moves styles from <head> to <body>', () => {
     expect(
-      sanitize('<html><head><style></style></head><body></body></html>', '', {
-        id: 'test'
-      })
-    ).toBe('<div id="test"><style></style></div>');
+      sanitize(
+        '<html><head><style>p {color: red;}</style></head><body></body></html>',
+        '',
+        {
+          id: 'test'
+        }
+      )
+    ).toBe('<div id="test"><style>#test p {color: red;}</style></div>');
   });
 
   it('removes comments', () => {
@@ -209,5 +212,43 @@ describe('sanitizer', () => {
         noWrapper: true
       })
     ).toBe('<div class="foo"></div>');
+  });
+
+  it('prefixes ids and classes in CSS', () => {
+    expect(
+      sanitize(
+        `<style>a {background: red !important;}
+.test {background: red;}
+#test {background: red;}</style>`,
+        '',
+        { id: 'test' }
+      )
+    ).toBe(`<div id="test"><style>#test a {background: red !important;}
+#test .test_test {background: red;}
+#test #test_test {background: red;}</style></div>`);
+  });
+
+  it('preserves CSS priority', () => {
+    expect(
+      sanitize(
+        `<style>a {background: red !important;}
+b {background: red;}</style>`,
+        '',
+        { noWrapper: true }
+      )
+    ).toBe(`<style>a {background: red !important;}
+b {background: red;}</style>`);
+  });
+
+  it('drops !important when preserveCssPriority is set to false', () => {
+    expect(
+      sanitize(
+        `<style>a {background: red !important;}
+b {background: red;}</style>`,
+        '',
+        { noWrapper: true, preserveCssPriority: false }
+      )
+    ).toBe(`<style>a {background: red;}
+b {background: red;}</style>`);
   });
 });
