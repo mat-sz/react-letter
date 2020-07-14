@@ -92,13 +92,14 @@ function sanitizeCssStyle(
     const name = style.item(i);
     properties.push(name);
   }
-
   for (let name of properties) {
     if (allowedCssProperties.includes(name)) {
       const value = style.getPropertyValue(name);
+      const priority = style.getPropertyPriority(name);
       style.setProperty(
         name,
-        sanitizeCssValue(value, allowedSchemas, rewriteExternalResources)
+        sanitizeCssValue(value, allowedSchemas, rewriteExternalResources),
+        priority
       );
     } else {
       style.removeProperty(name);
