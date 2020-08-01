@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-<img alt="Travis (.com)" src="https://img.shields.io/travis/com/mat-sz/react-letter">
+<img alt="workflow" src="https://img.shields.io/github/workflow/status/mat-sz/react-letter/Node.js%20CI%20(yarn)">
 <a href="https://npmjs.com/package/react-letter">
 <img alt="npm" src="https://img.shields.io/npm/v/react-letter">
 <img alt="npm" src="https://img.shields.io/npm/dw/react-letter">
