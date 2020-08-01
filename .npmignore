@@ -7,3 +7,4 @@ yarn.lock
 .prettierrc
 tsconfig.json
 logo.png
+.github
