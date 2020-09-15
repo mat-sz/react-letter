@@ -75,7 +75,7 @@ function sanitizeCssValue(
         quote = "'";
       }
 
-      if (allowedSchemas.includes(url.split(':')[0])) {
+      if (allowedSchemas.includes(url.toLowerCase().split(':')[0])) {
         if (rewriteExternalResources) {
           return 'url(' + quote + rewriteExternalResources(url) + quote + ')';
         } else {
@@ -130,6 +130,8 @@ function sanitizeCssRule(
   );
 }
 
+const defaultAllowedSchemas = ['http', 'https', 'mailto'];
+
 function sanitizeHtml(
   input: string,
   {
@@ -142,13 +144,18 @@ function sanitizeHtml(
           .fill(undefined)
           .map(_ => ((Math.random() * 25) % 25) + 65)
       ),
-    allowedSchemas = ['http', 'https', 'mailto'],
+    allowedSchemas = defaultAllowedSchemas,
     preserveCssPriority = true,
     noWrapper = false
   }: SanitizerOptions
 ) {
   if (noWrapper) id = '';
   const doc = new DOMParser().parseFromString(input, 'text/html');
+
+  // Ensure allowed schemas are lower case.
+  allowedSchemas = Array.isArray(allowedSchemas)
+    ? allowedSchemas.map(schema => schema.toLowerCase())
+    : defaultAllowedSchemas;
 
   // Remove comments.
   const commentIter = doc.createNodeIterator(
@@ -227,7 +234,7 @@ function sanitizeHtml(
           );
         } else if (attribute === 'href' || attribute === 'src') {
           const value = element.getAttribute(attribute) ?? '';
-          if (!allowedSchemas.includes(value.split(':')[0])) {
+          if (!allowedSchemas.includes(value.toLowerCase().split(':')[0])) {
             element.removeAttribute(attribute);
           } else if (attribute === 'href' && rewriteExternalLinks) {
             element.setAttribute(attribute, rewriteExternalLinks(value));

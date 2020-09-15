@@ -159,6 +159,44 @@ describe('sanitizer', () => {
     );
   });
 
+  it('all schemas specified in allowedSchemas are case-insensitive', () => {
+    expect(
+      sanitize('<a href="HTTP://test.com"></a>', '', {
+        id: 'test',
+        allowedSchemas: ['http']
+      })
+    ).toBe(
+      '<div id="test"><a href="HTTP://test.com" rel="noopener noreferrer"></a></div>'
+    );
+
+    expect(
+      sanitize('<a href="http://test.com"></a>', '', {
+        id: 'test',
+        allowedSchemas: ['HTTP']
+      })
+    ).toBe(
+      '<div id="test"><a href="http://test.com" rel="noopener noreferrer"></a></div>'
+    );
+
+    expect(
+      sanitize('<a href="htTP://test.com"></a>', '', {
+        id: 'test',
+        allowedSchemas: ['HTTP']
+      })
+    ).toBe(
+      '<div id="test"><a href="htTP://test.com" rel="noopener noreferrer"></a></div>'
+    );
+
+    expect(
+      sanitize('<a href="HTtp://test.com"></a>', '', {
+        id: 'test',
+        allowedSchemas: ['http']
+      })
+    ).toBe(
+      '<div id="test"><a href="HTtp://test.com" rel="noopener noreferrer"></a></div>'
+    );
+  });
+
   it('adds rel="noopener noreferrer" to <a> (and only it)', () => {
     expect(
       sanitize('<a></a>', '', {
