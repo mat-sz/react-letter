@@ -7,8 +7,28 @@ export const allowedTags = {
   caption: ['class', 'id', 'style'],
   cite: ['class', 'id', 'style'],
   code: ['class', 'id', 'style'],
-  col: ['class', 'id', 'style'],
-  colgroup: ['class', 'id', 'style'],
+  col: [
+    'align',
+    'bgcolor',
+    'char',
+    'charoff',
+    'class',
+    'id',
+    'style',
+    'valign',
+    'width'
+  ],
+  colgroup: [
+    'align',
+    'bgcolor',
+    'char',
+    'charoff',
+    'class',
+    'id',
+    'style',
+    'valign',
+    'width'
+  ],
   center: ['class', 'id', 'style'],
   dd: ['class', 'id', 'style'],
   div: ['align', 'class', 'dir', 'id', 'style'],
@@ -79,7 +99,16 @@ export const allowedTags = {
     'valign',
     'width'
   ],
-  tfoot: ['class', 'id', 'style'],
+  tfoot: [
+    'align',
+    'bgcolor',
+    'char',
+    'charoff',
+    'class',
+    'id',
+    'style',
+    'valign'
+  ],
   th: [
     'abbr',
     'align',
@@ -96,8 +125,27 @@ export const allowedTags = {
     'valign',
     'width'
   ],
-  thead: ['class', 'id', 'style'],
-  tr: ['align', 'bgcolor', 'class', 'dir', 'id', 'style', 'valign'],
+  thead: [
+    'align',
+    'bgcolol',
+    'char',
+    'charoff',
+    'class',
+    'id',
+    'style',
+    'valign'
+  ],
+  tr: [
+    'align',
+    'bgcolor',
+    'char',
+    'charoff',
+    'class',
+    'dir',
+    'id',
+    'style',
+    'valign'
+  ],
   u: ['class', 'id', 'style'],
   ul: ['class', 'dir', 'id', 'style']
 } as { [k: string]: string[] };
