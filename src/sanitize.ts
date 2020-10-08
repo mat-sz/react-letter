@@ -88,11 +88,15 @@ function sanitizeCssValue(
 }
 
 function sanitizeCssStyle(
-  style: CSSStyleDeclaration,
+  style: CSSStyleDeclaration | undefined,
   allowedSchemas: string[],
   preserveCssPriority: boolean,
   rewriteExternalResources?: (url: string) => string
 ) {
+  if (!style) {
+    return;
+  }
+
   const properties: string[] = [];
 
   for (let i = 0; i < style.length; i++) {
@@ -264,12 +268,15 @@ function sanitizeHtml(
 
   for (let element of toRemove) {
     try {
-      element.parentNode?.removeChild(element);
-      if (!element.parentNode) {
+      try {
+        element.parentNode?.removeChild(element);
+      } catch {
         element.outerHTML = '';
       }
     } catch {
-      element.outerHTML = '';
+      try {
+        element.remove();
+      } catch {}
     }
   }
 
