@@ -60,7 +60,7 @@ export const allowedTags = {
   label: ['class', 'id', 'style'],
   legend: ['class', 'id', 'style'],
   li: ['class', 'dir', 'id', 'style', 'type'],
-  ol: ['class', 'dir', 'id', 'style', 'type'],
+  ol: ['class', 'dir', 'id', 'style', 'type', 'start', 'reversed'],
   p: ['align', 'class', 'dir', 'id', 'style'],
   pre: ['class', 'id', 'style'],
   span: ['class', 'id', 'style'],
