@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { sanitize } from 'lettersanitizer';
 
 export interface LetterProps {
