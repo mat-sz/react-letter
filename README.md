@@ -21,7 +21,7 @@ Features:
 - Prefixing classes and IDs to prevent clashing with page styles.
 - Wrapping contents in an iframe (as an option).
 - First-class TypeScript support (the entire library is written in TypeScript), along with [a related RFC 822 parser project](https://github.com/mat-sz/letterparser) also written in TypeScript.
-- No dependencies except for React itself.
+- Only one dependency ([lettersanitizer](https://github.com/mat-sz/lettersanitizer)).
 
 The component itself is parser-agnostic, and can be used with any RFC 822 parser as long as it provides HTML or text output. The sanitization is done on the client-side using DOMParser with some security features targeting older browsers (although there's no guarantee of full functionality under browser versions older than 5 years).
 
