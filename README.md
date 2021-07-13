@@ -65,24 +65,6 @@ Some message.`);
 <Letter html={html} text={text} />;
 ```
 
-### sanitize function
-
-react-letter also exposes a `sanitize` function that uses DOMParser to sanitize the HTML content of messages and returns HTML text. This allows for usage in other libraries without having to copy the code from react-letter.
-
-```ts
-interface SanitizerOptions {
-  id?: string;
-  dropAllHtmlTags?: boolean;
-  rewriteExternalResources?: (url: string) => string;
-  rewriteExternalLinks?: (url: string) => string;
-  allowedSchemas?: string[];
-  preserveCssPriority?: boolean;
-  noWrapper?: boolean;
-}
-
-function sanitize(html: string, text?: string, options?: SanitizerOptions);
-```
-
 ## Configuration
 
 `Letter` supports the following properties:
