@@ -66,6 +66,6 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "lettersanitizer": "^1.0.0"
+    "lettersanitizer": "^1.0.1"
   }
 }
