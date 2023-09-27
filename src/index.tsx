@@ -1,1 +1,1 @@
-export * from './Letter';
+export * from './Letter.js';

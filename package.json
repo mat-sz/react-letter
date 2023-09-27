@@ -1,7 +1,16 @@
 {
   "version": "0.3.1",
   "description": "Display e-mail messages in your React projects.",
-  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "require": "./dist/react-letter.cjs",
+      "import": "./dist/react-letter.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "type": "module",
+  "main": "dist/react-letter.cjs",
+  "module": "dist/react-letter.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
@@ -11,11 +20,10 @@
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build"
+    "build": "vite build",
+    "test": "vitest",
+    "lint": "eslint src",
+    "prepare": "vite build"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -28,20 +36,8 @@
     "url": "https://github.com/mat-sz/react-letter/issues"
   },
   "homepage": "https://github.com/mat-sz/react-letter",
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "prettier": {
-    "tabWidth": 2,
-    "singleQuote": true,
-    "semi": true,
-    "arrowParens": "avoid"
-  },
   "name": "react-letter",
   "author": "Mat Sz <contact@matsz.dev>",
-  "module": "dist/react-letter.esm.js",
   "license": "BSD-3-Clause-Clear",
   "keywords": [
     "react",
@@ -54,16 +50,21 @@
     "ui"
   ],
   "devDependencies": {
-    "@testing-library/react": "^13.3.0",
+    "@rollup/plugin-typescript": "^11.1.4",
+    "@testing-library/jest-dom": "^6.1.3",
+    "@testing-library/react": "^14.0.0",
     "@types/jest": "^28.1.3",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
+    "@vitejs/plugin-react": "^4.1.0",
     "husky": "^8.0.1",
+    "jsdom": "^22.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "vitest": "^0.34.5"
   },
   "dependencies": {
     "lettersanitizer": "^1.0.2"

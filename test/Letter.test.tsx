@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import { Letter } from './Letter';
+import { Letter } from '../src/Letter.js';
 
 describe('Letter', () => {
   it('sanitizes the HTML passed to it', () => {

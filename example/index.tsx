@@ -1,13 +1,12 @@
-import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Letter } from '../';
+import { Letter } from '../src/index.js';
 
 const STORAGE_KEY = 'react-letter-html';
 
-const App = () => {
+const App: React.FC = () => {
   const [html, setHtml] = React.useState<string>(() => {
-     return localStorage.getItem(STORAGE_KEY) || '<p>Your message.</p>';
+    return localStorage.getItem(STORAGE_KEY) || '<p>Your message.</p>';
   });
   React.useEffect(() => {
     localStorage.setItem(STORAGE_KEY, html);
@@ -15,7 +14,12 @@ const App = () => {
   const inputRef = React.useRef<HTMLTextAreaElement>(null);
   return (
     <div>
-      <textarea ref={inputRef} rows={12} style={{width:'100%'}} defaultValue={html} />
+      <textarea
+        ref={inputRef}
+        rows={12}
+        style={{ width: '100%' }}
+        defaultValue={html}
+      />
       <button onClick={() => setHtml(inputRef.current!.value)}>View</button>
       <Letter html={html} />
     </div>
