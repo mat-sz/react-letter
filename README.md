@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-<img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/mat-sz/react-letter/node.js.yml?branch=main">
+<img alt="workflow" src="https://img.shields.io/github/actions/workflow/status/mat-sz/react-letter/node.js.yml?branch=master">
 <a href="https://npmjs.com/package/react-letter">
 <img alt="npm" src="https://img.shields.io/npm/v/react-letter">
 <img alt="npm" src="https://img.shields.io/npm/dw/react-letter">
@@ -27,9 +27,9 @@ The component itself is parser-agnostic, and can be used with any RFC 822 parser
 
 **Check other TypeScript e-mail projects:**
 
-| Parser                                                 | Inbound SMTP                                   |
-| ------------------------------------------------------ | ---------------------------------------------- |
-| [letterparser](https://github.com/mat-sz/letterparser) | [microMTA](https://github.com/mat-sz/microMTA) |
+| Parser                                                 | SMTP client/server                                 |
+| ------------------------------------------------------ | -------------------------------------------------- |
+| [letterparser](https://github.com/mat-sz/letterparser) | [@typemail/smtp](https://github.com/typemail/smtp) |
 
 ## Installation
 
