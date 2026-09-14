@@ -67,6 +67,6 @@
     "vitest": "^0.34.5"
   },
   "dependencies": {
-    "lettersanitizer": "^1.0.8"
+    "lettersanitizer": "^1.0.9"
   }
 }

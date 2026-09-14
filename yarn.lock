@@ -1430,10 +1430,10 @@ jsonc-parser@^3.2.0:
   resolved "https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-3.2.0.tgz#31ff3f4c2b9793f89c67212627c51c6394f88e76"
   integrity sha512-gfFQZrcTc8CnKXp6Y4/CBT3fTc0OVuDofpre4aEeEpSBPV5X5v4+Vmx+8snU7RLPrNHPKSgLxGo9YuQzz20o+w==
 
-lettersanitizer@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/lettersanitizer/-/lettersanitizer-1.0.8.tgz#c2b3d5149816dc3383e1003c00132852c601df99"
-  integrity sha512-xVP+ip61D7FgJsR9j3fsGo2xMw8+EUudVmvfj5CXg0DxbznVIurRyQcak+uT988AZT6g/SUW29ize8eq1NuBRw==
+lettersanitizer@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/lettersanitizer/-/lettersanitizer-1.0.9.tgz#4617cfc3b5cb9011592f46cf7891602c5a501385"
+  integrity sha512-RcQgbvMrtCouiI881RR6nMi+VCLIjCniKnMQCBOiCZbzxAA3PaaVvZRMuelgnzwbw3zQE58hkT5u9MrGwiqzgA==
 
 local-pkg@^0.4.3:
   version "0.4.3"

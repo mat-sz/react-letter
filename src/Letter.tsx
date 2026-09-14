@@ -70,7 +70,7 @@ export const Letter: React.FC<LetterProps> = React.memo(
     if (useIframe) {
       return (
         <div className={className}>
-          <iframe srcDoc={sanitizedHtml} title={iframeTitle} />
+          <iframe sandbox="" srcDoc={sanitizedHtml} title={iframeTitle} />
         </div>
       );
     }
